@@ -14,7 +14,7 @@ jobs:
       - name: Set secrets and deploy
         run: |
           # Convert JSON in one-liner because fly.io don't support newlines in secrets
-          echo "${{ secrets.GOOGLE_CREDS_JSON }}" | base64 | tr -d '\n' > creds_b64.txt
+          echo '${{ secrets.GOOGLE_CREDS_JSON }}' | base64 | tr -d '\n' > creds_b64.txt
           b64_creds=$(cat creds_b64.txt)
           
           # Set secrets and deploy
