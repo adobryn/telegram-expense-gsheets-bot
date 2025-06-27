@@ -13,10 +13,15 @@ jobs:
 
       - name: Set secrets and deploy
         run: |
+          # Convert JSON in one-liner for fly.io 
+          echo "${{ secrets.GOOGLE_CREDS_JSON }}" | base64 | tr -d '\n' > creds_b64.txt
+          b64_creds=$(cat creds_b64.txt)
+          
+          # Set secrets and deploy
           flyctl secrets set \
             BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
             SPREADSHEET_ID="${{ secrets.SPREADSHEET_ID }}" \
-            GOOGLE_CREDS_JSON="${{ secrets.GOOGLE_CREDS_JSON }}"
+            GOOGLE_CREDS_B64="$b64_creds"
 
           flyctl deploy --remote-only
         env:
