@@ -1,5 +1,6 @@
 import os
 import logging
+import base64
 import json
 from datetime import datetime
 import gspread
@@ -36,8 +37,9 @@ def get_main_keyboard():
 # Google Sheets Setup
 def get_sheets_client():
     scope = ["https://www.googleapis.com/auth/spreadsheets"]
-    creds_data = os.environ["GOOGLE_CREDS_JSON"]
-    creds_dict = json.loads(creds_data)
+    b64_data = os.environ["GOOGLE_CREDS_JSON"]
+    json_str = base64.b64decode(b64_data).decode("utf-8")
+    creds_dict = json.loads(json_str)
     creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
     return gspread.authorize(creds)
 
