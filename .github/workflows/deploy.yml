@@ -21,7 +21,7 @@ jobs:
           flyctl secrets set \
             BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
             SPREADSHEET_ID="${{ secrets.SPREADSHEET_ID }}" \
-            GOOGLE_CREDS_B64="$b64_creds"
+            GOOGLE_CREDS_JSON="$b64_creds"
 
           # Keep only one machine running, important for the bot
           flyctl deploy --ha=false --remote-only
