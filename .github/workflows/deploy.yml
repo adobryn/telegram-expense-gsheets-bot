@@ -8,22 +8,21 @@ jobs:
     name: Deploy bot
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683                             #v4.2.2
-      - uses: superfly/flyctl-actions/setup-flyctl@fc53c09e1bc3be6f54706524e3b82c4f462f77be         #v1.5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+      - name: Install Railway CLI
+        run: npm install -g railway
 
-      - name: Set secrets and deploy
+      - name: Login to Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Link to Railway project
+        run: railway link --project YOUR_PROJECT_ID
+
+      - name: Set secrets
         run: |
-          # Convert JSON in one-liner for fly.io 
-          echo "${{ secrets.GOOGLE_CREDS_JSON }}" | base64 | tr -d '\n' > creds_b64.txt
-          b64_creds=$(cat creds_b64.txt)
-          
-          # Set secrets and deploy
-          flyctl secrets set \
-            BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
-            SPREADSHEET_ID="${{ secrets.SPREADSHEET_ID }}" \
-            GOOGLE_CREDS_JSON="$b64_creds"
+          railway secrets set BOT_TOKEN="${{ secrets.BOT_TOKEN }}"
+          railway secrets set SPREADSHEET_ID="${{ secrets.SPREADSHEET_ID }}"
+          railway secrets set GOOGLE_CREDS_JSON='${{ secrets.GOOGLE_CREDS_JSON }}'
 
-          # Keep only one machine running, important for the bot
-          flyctl deploy --ha=false --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Deploy app
+        run: railway up
